@@ -10,4 +10,4 @@ Navigate to http://localhost:3000
 
 ### Changing the vrm
 
-Add the vrm folder to public/assets/models/vrms and name the file test.vrm
+Add new vrm to public/assets/models/vrms and name the file test.vrm
