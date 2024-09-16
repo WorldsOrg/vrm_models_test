@@ -1,0 +1,14 @@
+@keyframes move_and_fade {
+  0% {
+    transform: translateY(0) scale(1) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-500px) scale(0) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+.animate_move_and_fade {
+  animation: move_and_fade 3s forwards;
+}

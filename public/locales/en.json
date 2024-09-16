@@ -1,0 +1,18 @@
+{
+  "welcome": ["Missed you! Pat my head to make me happy!", "I'm so happy to see you! Pat my head to make me happy!", "I'm so happy you're here! Pat my head to make me happy!"],
+  "clicking": ["Thank you, go on!", "Nice!", "I like it!", "Keep going!", "I'm happy!", "I'm so happy!"],
+  "claiming": ["You have a new Waifu, don't forget me!", "You opened a new Waifu, claim her!", "Here is a gift for ya"],
+  "selectWaifu": "Select Waifu",
+  "leaderboard": "Leaderboard",
+  "settings": "Settings",
+  "selectLanguage": "Select Language",
+  "english": "English",
+  "chinese": "中文",
+  "russian": "Русский",
+  "sound": "Sound",
+  "on": "On",
+  "off": "Off",
+  "sendFeedback": "Send Feedback",
+  "claimGift": "Claim your gift",
+  "claim": "Claim"
+}
