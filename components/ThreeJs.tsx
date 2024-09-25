@@ -13,10 +13,14 @@ const ThreeJSComponent = memo(function ThreeJSComponent({
   clickerCount,
   eyePosition,
   setReady,
+  testAnimation,
+  setTestAnimation,
 }: {
   clickerCount: number;
   eyePosition: { x: number; y: number };
   setReady: () => void;
+  testAnimation: boolean;
+  setTestAnimation: (value: boolean) => void;
 }) {
   const containerRef = useRef(null);
   const rendererRef = useRef(null);
@@ -44,6 +48,7 @@ const ThreeJSComponent = memo(function ThreeJSComponent({
   const pose1ActionData = useRef(null);
   const happyActionData = useRef(null);
   const excitedActionData = useRef(null);
+  const testActionData = useRef(null);
   const tapAnimations = [happyActionData, excitedActionData];
   const idleFBXUrl = "/assets/models/Idle.fbx";
   const loserFBXUrl = "/assets/models/Loser.fbx";
@@ -52,6 +57,7 @@ const ThreeJSComponent = memo(function ThreeJSComponent({
   const pose1FBXUrl = "/assets/models/Pose_1.fbx";
   const happyFBXURL = "/assets/models/Happy.fbx";
   const excitedFBXURL = "/assets/models/Excited.fbx";
+  const testFBXURL = "/assets/models/Test.fbx";
 
   const smileAndBowTimeoutRef = useRef(null); // Ref to store the smile timeout
   const expressionTimeoutRef = useRef(null);
@@ -249,6 +255,23 @@ const ThreeJSComponent = memo(function ThreeJSComponent({
     }, startWavingTimeout);
   }, [animationsLoaded]);
 
+  useEffect(() => {
+    if (!testAnimation) return;
+    // don't let other animations or expressions play
+    setAnimationPlaying(true);
+    testActionData.current.reset();
+    testActionData.current.play();
+    idleActionData.current.crossFadeTo(testActionData.current, 0.4);
+    setTimeout(() => {
+      idleActionData.current.reset();
+      idleActionData.current.play();
+      testActionData.current.crossFadeTo(idleActionData.current, 0.4);
+      setAnimationPlaying(false);
+    }, 3000);
+    setTestAnimation(false);
+
+  }, [testAnimation, setTestAnimation]);
+
   const handleAnimation = (counter) => {
     if (counter % 40 === 0 && counter !== 0) {
       // only play new animation if a current one is not playing
@@ -387,9 +410,6 @@ const ThreeJSComponent = memo(function ThreeJSComponent({
       loadMixamoAnimation(wavingFBXUrl, currentVrm.current).then((clip) => {
         wavingActionData.current = currentMixer.current.clipAction(clip);
       }),
-      loadMixamoAnimation(idleFBXUrl, currentVrm.current).then((clip) => {
-        idleActionData.current = currentMixer.current.clipAction(clip);
-      }),
       loadMixamoAnimation(loserFBXUrl, currentVrm.current).then((clip) => {
         loserActionData.current = currentMixer.current.clipAction(clip);
       }),
@@ -404,6 +424,9 @@ const ThreeJSComponent = memo(function ThreeJSComponent({
       }),
       loadMixamoAnimation(excitedFBXURL, currentVrm.current).then((clip) => {
         excitedActionData.current = currentMixer.current.clipAction(clip);
+      }),
+      loadMixamoAnimation(testFBXURL, currentVrm.current).then((clip) => {
+        testActionData.current = currentMixer.current.clipAction(clip);
       }),
     ];
 
