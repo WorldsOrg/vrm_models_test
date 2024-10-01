@@ -15,7 +15,7 @@ export function loadMixamoAnimation(url, vrm) {
   return loader.loadAsync(url).then((asset) => {
     const name = asset.animations[0].name;
     const clip = THREE.AnimationClip.findByName(asset.animations, name); // extract the AnimationClip
-    console.log(url, clip);
+    console.log(clip);
 
     const tracks = []; // KeyframeTracks compatible with VRM will be added here
 
@@ -42,7 +42,8 @@ export function loadMixamoAnimation(url, vrm) {
     const vrmRootY = vrm.scene.getWorldPosition(_vec3).y;
     const vrmHipsHeight = Math.abs(vrmHipsY - vrmRootY);
     const hipsPositionScale = vrmHipsHeight / motionHipsHeight;
-
+    let firstQuaternionTrackLength: number | null = null;
+    
     clip.tracks.forEach((track) => {
       // Convert each track for VRM use and push to `tracks`
       const trackSplitted = track.name.split(".");
@@ -51,7 +52,7 @@ export function loadMixamoAnimation(url, vrm) {
 
       if (!vrmBoneName) {
         // If there is no corresponding VRM bone, skip this track
-        console.warn(`No corresponding VRM bone found for ${rigName}, skipping...`);
+        // console.warn(`No corresponding VRM bone found for ${rigName}, skipping...`);
         return;
       }
 
@@ -66,6 +67,17 @@ export function loadMixamoAnimation(url, vrm) {
         rigNode.parent.getWorldQuaternion(parentRestWorldRotation);
 
         if (track instanceof THREE.QuaternionKeyframeTrack) {
+          // Store the length of the first quaternion track's values
+          if (firstQuaternionTrackLength === null) {
+            firstQuaternionTrackLength = track.values.length;
+            console.log("firstQuaternionTrackLength", firstQuaternionTrackLength);
+          }
+
+          // Check if the current track's values length is less than or equal to the first track's values length
+          if (track.values.length > firstQuaternionTrackLength) {
+            // Skip this track if its length is greater than the first track's length
+            return;
+          }
           // Retarget rotation of rig to NormalizedBone.
           for (let i = 0; i < track.values.length; i += 4) {
             const flatQuaternion = track.values.slice(i, i + 4);
@@ -90,6 +102,9 @@ export function loadMixamoAnimation(url, vrm) {
             ),
           );
         } else if (track instanceof THREE.VectorKeyframeTrack) {
+          if (vrmBoneName != "hips" || propertyName.toString() !== "position") {
+            return;
+          }
           const value = track.values.map((v, i) => (vrm.meta?.metaVersion === "0" && i % 3 !== 1 ? -v : v) * hipsPositionScale);
           tracks.push(new THREE.VectorKeyframeTrack(`${vrmNodeName}.${propertyName}`, track.times, value));
         }
