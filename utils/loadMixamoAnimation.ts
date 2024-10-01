@@ -15,7 +15,6 @@ export function loadMixamoAnimation(url, vrm) {
   return loader.loadAsync(url).then((asset) => {
     const name = asset.animations[0].name;
     const clip = THREE.AnimationClip.findByName(asset.animations, name); // extract the AnimationClip
-    console.log(clip);
 
     const tracks = []; // KeyframeTracks compatible with VRM will be added here
 
@@ -52,7 +51,6 @@ export function loadMixamoAnimation(url, vrm) {
 
       if (!vrmBoneName) {
         // If there is no corresponding VRM bone, skip this track
-        // console.warn(`No corresponding VRM bone found for ${rigName}, skipping...`);
         return;
       }
 
@@ -70,7 +68,6 @@ export function loadMixamoAnimation(url, vrm) {
           // Store the length of the first quaternion track's values
           if (firstQuaternionTrackLength === null) {
             firstQuaternionTrackLength = track.values.length;
-            console.log("firstQuaternionTrackLength", firstQuaternionTrackLength);
           }
 
           // Check if the current track's values length is less than or equal to the first track's values length
